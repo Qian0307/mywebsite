@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>✎ 星辰誌後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Noto Sans TC","Segoe UI",sans-serif;}
+body{background:#020617;color:#e2e8f0;min-height:100vh;}
+
+/* ── Stars bg ── */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:-1;}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle 3s infinite ease-in-out;}
+@keyframes twinkle{0%,100%{opacity:.08;transform:scale(.8)}50%{opacity:.55;transform:scale(1.3)}}
+
+/* ── Layout ── */
+.page{max-width:860px;margin:0 auto;padding:40px 24px 80px;}
+
+/* ── Header ── */
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;padding-bottom:18px;border-bottom:1px solid rgba(147,197,253,.12);}
+.admin-title{font-family:"Noto Serif TC",serif;font-size:26px;color:#bfdbfe;text-shadow:0 0 12px rgba(147,197,253,.4);}
+.admin-title small{display:block;font-family:"Noto Sans TC",sans-serif;font-size:12px;color:#334155;margin-top:4px;letter-spacing:1px;}
+.back-btn{padding:8px 16px;background:transparent;border:1px solid rgba(147,197,253,.22);border-radius:9px;color:#64748b;text-decoration:none;font-size:13px;transition:.2s;}
+.back-btn:hover{color:#bfdbfe;border-color:rgba(147,197,253,.5);}
+
+/* ── Lock screen ── */
+.lock-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:18px;}
+.lock-icon{font-size:48px;margin-bottom:8px;}
+.lock-screen h2{font-family:"Noto Serif TC",serif;font-size:22px;color:#bfdbfe;}
+.lock-screen p{font-size:14px;color:#475569;}
+.lock-row{display:flex;gap:10px;width:100%;max-width:360px;}
+.lock-input{flex:1;padding:11px 15px;background:rgba(15,23,42,.9);border:1px solid rgba(147,197,253,.2);border-radius:10px;color:#e2e8f0;font-size:14px;outline:none;transition:.2s;}
+.lock-input:focus{border-color:rgba(147,197,253,.55);}
+.lock-input.error{border-color:rgba(248,113,113,.6);animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.lock-btn{padding:11px 20px;background:rgba(147,197,253,.12);border:1px solid rgba(147,197,253,.4);border-radius:10px;color:#bfdbfe;cursor:pointer;font-size:14px;transition:.2s;}
+.lock-btn:hover{background:rgba(147,197,253,.22);box-shadow:0 0 14px rgba(147,197,253,.3);}
+
+/* ── Main panel (hidden until unlocked) ── */
+.main-panel{display:none;}
+.main-panel.visible{display:block;}
+
+/* ── Section cards ── */
+.card{background:rgba(10,18,35,.88);border:1px solid rgba(147,197,253,.16);border-radius:18px;padding:28px 28px;margin-bottom:28px;}
+.card-title{font-family:"Noto Serif TC",serif;font-size:18px;color:#bfdbfe;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:"✦";color:#60a5fa;font-size:13px;}
+
+/* ── Stats bar ── */
+.stats-row{display:flex;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+.stat-chip{flex:1;min-width:120px;padding:16px 20px;background:rgba(15,23,42,.8);border:1px solid rgba(147,197,253,.14);border-radius:14px;text-align:center;}
+.stat-num{font-size:28px;font-weight:700;color:#bfdbfe;line-height:1;}
+.stat-label{font-size:12px;color:#475569;margin-top:5px;letter-spacing:.5px;}
+
+/* ── Form ── */
+.form-row{margin-bottom:16px;}
+.form-row label{display:block;font-size:13px;color:#64748b;margin-bottom:5px;letter-spacing:.3px;}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:10px 14px;background:rgba(15,23,42,.88);border:1px solid rgba(147,197,253,.18);border-radius:10px;color:#e2e8f0;font-size:14px;outline:none;transition:.2s;font-family:"Noto Sans TC",sans-serif;}
+.form-row input:focus,.form-row textarea:focus{border-color:rgba(147,197,253,.55);box-shadow:0 0 10px rgba(147,197,253,.1);}
+.form-row select option{background:#0f172a;}
+.form-row textarea{min-height:160px;resize:vertical;line-height:1.65;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.char-count{font-size:11px;color:#334155;text-align:right;margin-top:3px;}
+
+/* ── Preview ── */
+.preview-wrap{margin-top:10px;display:none;}
+.preview-wrap.visible{display:block;}
+.preview-label{font-size:12px;color:#475569;margin-bottom:6px;letter-spacing:.5px;}
+.preview-box{padding:16px 18px;background:rgba(15,23,42,.7);border:1px solid rgba(147,197,253,.15);border-radius:10px;color:#94a3b8;font-size:14px;line-height:1.85;max-height:260px;overflow-y:auto;}
+.preview-box h2{font-family:"Noto Serif TC",serif;font-size:16px;color:#93c5fd;margin:14px 0 8px;border-left:2px solid rgba(147,197,253,.4);padding-left:9px;}
+.preview-box h3{font-size:14.5px;color:#bfdbfe;margin:12px 0 6px;}
+.preview-box p{margin-bottom:10px;}
+.preview-box blockquote{border-left:2px solid rgba(147,197,253,.35);padding:8px 14px;background:rgba(147,197,253,.04);border-radius:0 8px 8px 0;color:#64748b;font-style:italic;margin:8px 0;}
+.preview-box ul{padding-left:16px;margin-bottom:10px;}
+.preview-box li{margin-bottom:5px;}
+.preview-box strong{color:#dbeafe;}
+.preview-box em{color:#a5b4fc;}
+.preview-box code{background:rgba(147,197,253,.1);padding:1px 6px;border-radius:4px;font-size:13px;color:#93c5fd;font-family:monospace;}
+.preview-toggle{font-size:12.5px;color:#60a5fa;cursor:pointer;padding:4px 0;display:inline-block;margin-top:4px;user-select:none;transition:.15s;}
+.preview-toggle:hover{color:#93c5fd;}
+
+/* ── Buttons ── */
+.btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+.btn-primary{padding:10px 22px;background:rgba(147,197,253,.14);border:1px solid rgba(147,197,253,.5);border-radius:10px;color:#bfdbfe;cursor:pointer;font-size:14px;transition:.2s;font-family:"Noto Sans TC",sans-serif;}
+.btn-primary:hover{background:rgba(147,197,253,.26);box-shadow:0 0 14px rgba(147,197,253,.3);}
+.btn-ghost{padding:10px 18px;background:transparent;border:1px solid rgba(148,163,184,.22);border-radius:10px;color:#64748b;cursor:pointer;font-size:14px;transition:.2s;font-family:"Noto Sans TC",sans-serif;}
+.btn-ghost:hover{border-color:rgba(148,163,184,.5);color:#94a3b8;}
+.btn-danger{padding:10px 18px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;color:#f87171;cursor:pointer;font-size:14px;transition:.2s;font-family:"Noto Sans TC",sans-serif;}
+.btn-danger:hover{background:rgba(248,113,113,.16);}
+.msg{font-size:13px;min-height:20px;margin-top:10px;transition:.3s;}
+.msg.ok{color:#4ade80;}
+.msg.err{color:#f87171;}
+
+/* ── Post list ── */
+.post-list{display:flex;flex-direction:column;gap:12px;}
+.post-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:16px 18px;background:rgba(15,23,42,.7);border:1px solid rgba(147,197,253,.12);border-radius:12px;transition:.2s;}
+.post-item:hover{border-color:rgba(147,197,253,.28);}
+.post-item-title{font-size:15px;color:#dbeafe;font-family:"Noto Serif TC",serif;margin-bottom:4px;}
+.post-item-meta{font-size:12px;color:#334155;}
+.post-item-tag{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(147,197,253,.22);color:#60a5fa;margin-right:6px;}
+.post-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn-edit{padding:5px 12px;background:rgba(147,197,253,.08);border:1px solid rgba(147,197,253,.25);border-radius:7px;color:#93c5fd;cursor:pointer;font-size:12px;transition:.15s;}
+.btn-edit:hover{background:rgba(147,197,253,.16);}
+.btn-del{padding:5px 12px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.22);border-radius:7px;color:#f87171;cursor:pointer;font-size:12px;transition:.15s;}
+.btn-del:hover{background:rgba(248,113,113,.16);}
+
+/* ── Edit modal ── */
+.edit-modal{position:fixed;inset:0;display:none;justify-content:center;align-items:center;background:rgba(2,6,23,.75);backdrop-filter:blur(12px);z-index:9999;padding:20px;}
+.edit-modal.open{display:flex;}
+.edit-box{width:min(680px,100%);background:rgba(10,18,35,.98);border:1px solid rgba(147,197,253,.28);border-radius:18px;padding:32px 30px;position:relative;max-height:90vh;overflow-y:auto;}
+.edit-close{position:absolute;top:14px;right:18px;background:transparent;border:1px solid rgba(147,197,253,.22);color:#93c5fd;cursor:pointer;font-size:13px;padding:4px 10px;border-radius:7px;}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:40px 20px;color:#334155;}
+.empty-state span{font-size:36px;display:block;margin-bottom:12px;}
+.empty-state p{font-size:14px;}
+
+/* ── Danger zone ── */
+.danger-zone{background:rgba(248,113,113,.04);border:1px solid rgba(248,113,113,.15);border-radius:14px;padding:20px 22px;}
+.danger-zone h4{font-size:15px;color:#f87171;margin-bottom:8px;}
+.danger-zone p{font-size:13px;color:#64748b;margin-bottom:14px;}
+</style>
+</head>
+<body>
+
+<div class="stars" id="starsEl"></div>
+
+<div class="page">
+  <div class="admin-header">
+    <div class="admin-title">
+      ✎ 星辰誌後台
+      <small>STELLAR BLOG ADMIN</small>
+    </div>
+    <a href="index.html" class="back-btn">← 回主頁</a>
+  </div>
+
+  <!-- Lock Screen -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-icon">🔐</div>
+    <h2>請輸入密碼</h2>
+    <p>此頁面受密碼保護</p>
+    <div class="lock-row">
+      <input type="password" class="lock-input" id="pwInput" placeholder="輸入密碼..." autocomplete="off">
+      <button class="lock-btn" id="pwBtn">解鎖</button>
+    </div>
+    <div class="msg" id="lockMsg"></div>
+  </div>
+
+  <!-- Main Panel -->
+  <div class="main-panel" id="mainPanel">
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- New Post -->
+    <div class="card">
+      <div class="card-title">新增文章</div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>文章標題 *</label>
+          <input type="text" id="f_title" placeholder="標題...">
+        </div>
+        <div class="form-row">
+          <label>標籤（顯示在卡片上）</label>
+          <input type="text" id="f_tag" placeholder="例：CVH · 膽固醇">
+        </div>
+        <div class="form-row">
+          <label>分類（用於篩選）</label>
+          <select id="f_cat">
+            <option value="CVH">CVH 心血管</option>
+            <option value="神經科學">神經科學</option>
+            <option value="感知覺">感知覺</option>
+            <option value="MindTrace">MindTrace</option>
+            <option value="語言">語言修煉</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>日期 / 來源</label>
+          <input type="text" id="f_date" placeholder="例：115.4.20・李醫師">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>卡片摘要</label>
+        <input type="text" id="f_desc" placeholder="一兩句話說明這篇在講什麼...">
+      </div>
+      <div class="form-row">
+        <label>正文內容 *（## 標題，> 引言，**粗體**，*斜體*，`程式碼`，[[關鍵詞]]，- 列表，空白行分段）</label>
+        <textarea id="f_body" placeholder="貼上你的筆記內容..." oninput="updatePreview();updateCharCount()"></textarea>
+        <div class="char-count" id="charCount">0 字</div>
+        <span class="preview-toggle" id="previewToggle" onclick="togglePreview()">👁 即時預覽</span>
+        <div class="preview-wrap" id="previewWrap">
+          <div class="preview-label">預覽效果</div>
+          <div class="preview-box" id="previewBox"><span style="color:#334155;">開始輸入就會在這裡預覽…</span></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="f_submit">✦ 發布文章</button>
+        <button class="btn-ghost" id="f_clear">清除</button>
+      </div>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <!-- Post List -->
+    <div class="card">
+      <div class="card-title">已發布文章</div>
+      <div id="postList"></div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card">
+      <div class="card-title" style="color:#f87171;">⚠ 危險區域</div>
+      <div class="danger-zone">
+        <h4>清除所有文章</h4>
+        <p>刪除後無法復原，所有透過後台新增的文章都會消失。</p>
+        <button class="btn-danger" id="clearAllBtn">清除全部文章</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="edit-modal" id="editModal">
+  <div class="edit-box">
+    <button class="edit-close" id="editClose">✕ 關閉</button>
+    <div class="card-title" style="margin-bottom:20px;">編輯文章</div>
+    <div class="form-grid">
+      <div class="form-row"><label>標題 *</label><input type="text" id="e_title"></div>
+      <div class="form-row"><label>標籤</label><input type="text" id="e_tag"></div>
+      <div class="form-row">
+        <label>分類</label>
+        <select id="e_cat">
+          <option value="CVH">CVH 心血管</option>
+          <option value="神經科學">神經科學</option>
+          <option value="感知覺">感知覺</option>
+          <option value="MindTrace">MindTrace</option>
+          <option value="語言">語言修煉</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-row"><label>日期 / 來源</label><input type="text" id="e_date"></div>
+    </div>
+    <div class="form-row"><label>摘要</label><input type="text" id="e_desc"></div>
+    <div class="form-row">
+      <label>正文內容</label>
+      <textarea id="e_body" style="min-height:180px;" oninput="updateEditPreview()"></textarea>
+      <span class="preview-toggle" id="editPreviewToggle" onclick="toggleEditPreview()">👁 即時預覽</span>
+      <div class="preview-wrap" id="editPreviewWrap">
+        <div class="preview-label">預覽效果</div>
+        <div class="preview-box" id="editPreviewBox"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="e_save">✦ 儲存變更</button>
+      <button class="btn-ghost" id="editClose2">取消</button>
+    </div>
+    <div class="msg" id="editMsg"></div>
+  </div>
+</div>
+
+<script>
+/* ── Stars ── */
+const sc=document.getElementById("starsEl");
+for(let i=0;i<100;i++){
+  const s=document.createElement("div");s.className="star";
+  s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*3+"s";
+  const sz=(Math.random()*2+1)+"px";s.style.width=s.style.height=sz;
+  sc.appendChild(s);
+}
+
+/* ── Storage ── */
+const STORE_KEY = "starPosts";
+function load(){return JSON.parse(localStorage.getItem(STORE_KEY)||"[]");}
+function save(p){localStorage.setItem(STORE_KEY,JSON.stringify(p));}
+
+/* ── Password ── */
+const ADMIN_PW = "shuangyue2025";
+document.getElementById("pwBtn").addEventListener("click", tryUnlock);
+document.getElementById("pwInput").addEventListener("keydown", e=>{if(e.key==="Enter")tryUnlock();});
+
+function tryUnlock(){
+  const val = document.getElementById("pwInput").value;
+  if(val === ADMIN_PW){
+    document.getElementById("lockScreen").style.display = "none";
+    document.getElementById("mainPanel").classList.add("visible");
+    renderStats();
+    renderPosts();
+  } else {
+    const inp = document.getElementById("pwInput");
+    inp.classList.add("error");
+    setTimeout(()=>inp.classList.remove("error"), 400);
+    const msg = document.getElementById("lockMsg");
+    msg.textContent = "密碼錯誤，請再試一次。";
+    msg.className = "msg err";
+  }
+}
+
+/* ── Stats ── */
+function renderStats(){
+  const posts = load();
+  const cats = {};
+  posts.forEach(p=>{ cats[p.cat||"其他"] = (cats[p.cat||"其他"]||0)+1; });
+  const topCat = Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  const totalChars = posts.reduce((s,p)=>s+(p.body||"").length,0);
+
+  document.getElementById("statsRow").innerHTML = `
+    <div class="stat-chip"><div class="stat-num">${posts.length}</div><div class="stat-label">篇文章</div></div>
+    <div class="stat-chip"><div class="stat-num">${Object.keys(cats).length}</div><div class="stat-label">個分類</div></div>
+    <div class="stat-chip"><div class="stat-num">${topCat?topCat[0]:"—"}</div><div class="stat-label">最多分類</div></div>
+    <div class="stat-chip"><div class="stat-num">${totalChars>1000?(totalChars/1000).toFixed(1)+"k":totalChars}</div><div class="stat-label">總字數</div></div>
+  `;
+}
+
+/* ── Markdown Parser ── */
+function parseBody(raw){
+  if(!raw)return"";
+  // inline formatting helper
+  function inlineFmt(s){
+    return s
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g,'<em>$1</em>')
+      .replace(/`(.+?)`/g,'<code>$1</code>')
+      .replace(/\[\[(.+?)\]\]/g,'<span class="key-concept">$1</span>');
+  }
+  const lines=raw.split("\n");
+  const out=[];
+  let inUl=false;
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    const trim=line.trim();
+    if(trim===""){
+      if(inUl){out.push("</ul>");inUl=false;}
+      continue;
+    }
+    if(line.startsWith("### ")){
+      if(inUl){out.push("</ul>");inUl=false;}
+      out.push(`<h3>${inlineFmt(line.slice(4))}</h3>`);
+    } else if(line.startsWith("## ")){
+      if(inUl){out.push("</ul>");inUl=false;}
+      out.push(`<h2>${inlineFmt(line.slice(3))}</h2>`);
+    } else if(line.startsWith("# ")){
+      if(inUl){out.push("</ul>");inUl=false;}
+      out.push(`<h2>${inlineFmt(line.slice(2))}</h2>`);
+    } else if(line.startsWith("> ")){
+      if(inUl){out.push("</ul>");inUl=false;}
+      out.push(`<blockquote>${inlineFmt(line.slice(2))}</blockquote>`);
+    } else if(line.match(/^[-*•]\s/)){
+      if(!inUl){out.push("<ul>");inUl=true;}
+      out.push(`<li>${inlineFmt(line.replace(/^[-*•]\s/,""))}</li>`);
+    } else {
+      if(inUl){out.push("</ul>");inUl=false;}
+      out.push(`<p>${inlineFmt(line)}</p>`);
+    }
+  }
+  if(inUl)out.push("</ul>");
+  return out.join("");
+}
+
+/* ── Preview ── */
+function updatePreview(){
+  const raw = document.getElementById("f_body").value;
+  const box = document.getElementById("previewBox");
+  box.innerHTML = parseBody(raw)||'<span style="color:#334155;">開始輸入就會在這裡預覽…</span>';
+}
+function togglePreview(){
+  const wrap = document.getElementById("previewWrap");
+  const visible = wrap.classList.toggle("visible");
+  document.getElementById("previewToggle").textContent = visible ? "👁 隱藏預覽" : "👁 即時預覽";
+  if(visible) updatePreview();
+}
+function updateCharCount(){
+  const len = document.getElementById("f_body").value.length;
+  document.getElementById("charCount").textContent = len.toLocaleString() + " 字";
+}
+function updateEditPreview(){
+  const raw = document.getElementById("e_body").value;
+  const box = document.getElementById("editPreviewBox");
+  box.innerHTML = parseBody(raw)||'<span style="color:#334155;">開始輸入就會在這裡預覽…</span>';
+}
+function toggleEditPreview(){
+  const wrap = document.getElementById("editPreviewWrap");
+  const visible = wrap.classList.toggle("visible");
+  document.getElementById("editPreviewToggle").textContent = visible ? "👁 隱藏預覽" : "👁 即時預覽";
+  if(visible) updateEditPreview();
+}
+
+/* ── Submit ── */
+document.getElementById("f_submit").addEventListener("click", ()=>{
+  const title = document.getElementById("f_title").value.trim();
+  const body  = document.getElementById("f_body").value.trim();
+  const msg   = document.getElementById("formMsg");
+  if(!title||!body){ msg.textContent="請填寫標題與正文。"; msg.className="msg err"; return; }
+  const posts = load();
+  posts.unshift({
+    id: Date.now(),
+    title,
+    tag:  document.getElementById("f_tag").value.trim() || document.getElementById("f_cat").value,
+    cat:  document.getElementById("f_cat").value,
+    desc: document.getElementById("f_desc").value.trim(),
+    date: document.getElementById("f_date").value.trim() || new Date().toLocaleDateString("zh-TW"),
+    body,
+    createdAt: new Date().toISOString()
+  });
+  save(posts);
+  renderStats();
+  renderPosts();
+  msg.textContent = "✦ 文章已發布！";
+  msg.className = "msg ok";
+  clearForm();
+  setTimeout(()=>msg.textContent="", 3000);
+});
+
+document.getElementById("f_clear").addEventListener("click", clearForm);
+function clearForm(){
+  ["f_title","f_tag","f_desc","f_date","f_body"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f_cat").selectedIndex = 0;
+  document.getElementById("charCount").textContent = "0 字";
+  document.getElementById("previewBox").innerHTML = '<span style="color:#334155;">開始輸入就會在這裡預覽…</span>';
+  document.getElementById("previewWrap").classList.remove("visible");
+  document.getElementById("previewToggle").textContent = "👁 即時預覽";
+}
+
+/* ── Post List ── */
+function renderPosts(){
+  const posts = load();
+  const container = document.getElementById("postList");
+  if(!posts.length){
+    container.innerHTML = `<div class="empty-state"><span>✦</span><p>尚無文章，在上方新增第一篇吧。</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="post-list">${posts.map((p,i)=>`
+    <div class="post-item">
+      <div>
+        <div class="post-item-title">${p.title}</div>
+        <div class="post-item-meta">
+          <span class="post-item-tag">${p.tag||p.cat}</span>
+          ${p.date} · ${(p.body||"").length} 字
+        </div>
+      </div>
+      <div class="post-actions">
+        <button class="btn-edit" onclick="openEdit(${i})">編輯</button>
+        <button class="btn-del"  onclick="deletePost(${i})">刪除</button>
+      </div>
+    </div>
+  `).join("")}</div>`;
+}
+
+function deletePost(idx){
+  if(!confirm("確定刪除這篇文章？")) return;
+  const posts = load(); posts.splice(idx,1); save(posts);
+  renderStats(); renderPosts();
+}
+
+/* ── Edit Modal ── */
+let editIdx = null;
+function openEdit(idx){
+  const posts = load(); const p = posts[idx]; if(!p) return;
+  editIdx = idx;
+  document.getElementById("e_title").value = p.title||"";
+  document.getElementById("e_tag").value   = p.tag||"";
+  document.getElementById("e_desc").value  = p.desc||"";
+  document.getElementById("e_date").value  = p.date||"";
+  document.getElementById("e_body").value  = p.body||"";
+  // set select
+  const sel = document.getElementById("e_cat");
+  for(let o of sel.options){ if(o.value===p.cat){ sel.value=p.cat; break; } }
+  document.getElementById("editPreviewWrap").classList.remove("visible");
+  document.getElementById("editPreviewToggle").textContent = "👁 即時預覽";
+  document.getElementById("editMsg").textContent = "";
+  document.getElementById("editModal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeEdit(){
+  document.getElementById("editModal").classList.remove("open");
+  document.body.style.overflow = "";
+  editIdx = null;
+}
+document.getElementById("editClose").addEventListener("click", closeEdit);
+document.getElementById("editClose2").addEventListener("click", closeEdit);
+document.getElementById("editModal").addEventListener("click", e=>{
+  if(e.target === document.getElementById("editModal")) closeEdit();
+});
+
+document.getElementById("e_save").addEventListener("click", ()=>{
+  if(editIdx===null) return;
+  const title = document.getElementById("e_title").value.trim();
+  const body  = document.getElementById("e_body").value.trim();
+  const msg   = document.getElementById("editMsg");
+  if(!title||!body){ msg.textContent="請填寫標題與正文。"; msg.className="msg err"; return; }
+  const posts = load();
+  posts[editIdx] = {
+    ...posts[editIdx],
+    title,
+    tag:  document.getElementById("e_tag").value.trim() || document.getElementById("e_cat").value,
+    cat:  document.getElementById("e_cat").value,
+    desc: document.getElementById("e_desc").value.trim(),
+    date: document.getElementById("e_date").value.trim() || posts[editIdx].date,
+    body,
+    updatedAt: new Date().toISOString()
+  };
+  save(posts);
+  renderStats(); renderPosts();
+  msg.textContent = "✦ 已儲存！"; msg.className = "msg ok";
+  setTimeout(closeEdit, 800);
+});
+
+/* ── Danger zone ── */
+document.getElementById("clearAllBtn").addEventListener("click", ()=>{
+  if(!confirm("確定清除所有文章？此操作無法復原。")) return;
+  save([]);
+  renderStats(); renderPosts();
+});
+</script>
+</body>
+</html>
