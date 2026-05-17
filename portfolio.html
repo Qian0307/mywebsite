@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>星辰魔法作品集 ✦ 雙月</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Noto Sans TC","Segoe UI",sans-serif;}
+body{background:#020617;color:#e2e8f0;overflow-x:hidden;}
+.stars{position:fixed;width:100%;height:100%;pointer-events:none;z-index:-1;}
+.star{position:absolute;border-radius:50%;background:white;opacity:.5;animation:twinkle 3s infinite ease-in-out;}
+@keyframes twinkle{0%,100%{opacity:.12;transform:scale(.8)}50%{opacity:.75;transform:scale(1.3)}}
+.nav{position:fixed;top:0;left:0;right:0;z-index:888;display:flex;justify-content:space-between;align-items:center;padding:13px 40px;background:rgba(2,6,23,.75);backdrop-filter:blur(16px);border-bottom:1px solid rgba(147,197,253,.1);}
+.nav-brand{font-family:"Noto Serif TC",serif;font-size:17px;color:#bfdbfe;letter-spacing:2px;}
+.nav-back{font-size:13px;color:#64748b;text-decoration:none;border:1px solid rgba(147,197,253,.2);padding:6px 14px;border-radius:8px;transition:.2s;}
+.nav-back:hover{color:#bfdbfe;border-color:rgba(147,197,253,.5);}
+.page-header{padding:120px 40px 60px;text-align:center;}
+.page-header h1{font-family:"Noto Serif TC",serif;font-size:40px;color:#bfdbfe;text-shadow:0 0 20px rgba(147,197,253,.55);margin-bottom:14px;letter-spacing:2px;}
+.page-header p{font-size:14.5px;color:#475569;max-width:480px;margin:0 auto;line-height:1.8;}
+.container{max-width:1040px;margin:0 auto;padding:0 28px 120px;}
+.section-title{font-family:"Noto Serif TC",serif;font-size:19px;color:#bfdbfe;margin:52px 0 20px;padding-bottom:11px;border-bottom:1px solid rgba(147,197,253,.14);display:flex;align-items:center;gap:10px;}
+.section-title::before{content:"✦";color:#60a5fa;font-size:13px;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:20px;}
+.card{padding:22px 20px;border-radius:16px;background:rgba(10,18,35,.85);border:1px solid rgba(147,197,253,.14);transition:.28s ease;cursor:pointer;position:relative;overflow:hidden;}
+.card:hover{transform:translateY(-5px);border-color:rgba(147,197,253,.38);box-shadow:0 0 22px rgba(147,197,253,.12);}
+.card-icon{width:40px;height:40px;border-radius:11px;background:rgba(147,197,253,.08);border:1px solid rgba(147,197,253,.18);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:14px;}
+.card h3{font-family:"Noto Serif TC",serif;font-size:16px;color:#dbeafe;margin-bottom:9px;line-height:1.4;}
+.card p{font-size:13px;color:#475569;line-height:1.7;margin-bottom:13px;}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.card-tag{font-size:10.5px;padding:2px 8px;border-radius:999px;border:1px solid rgba(147,197,253,.2);color:#64748b;}
+.card-detail{max-height:0;overflow:hidden;opacity:0;transition:max-height .45s ease,opacity .32s ease;margin-top:0;padding-top:0;border-top:0;}
+.card.open .card-detail{max-height:350px;opacity:1;margin-top:13px;padding-top:13px;border-top:1px solid rgba(255,255,255,.06);}
+.card-detail p{font-size:12.5px;color:#64748b;line-height:1.7;margin-bottom:7px;}
+.card-detail strong{color:#94a3b8;}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:999px;margin-bottom:11px;letter-spacing:.5px;}
+.badge.active{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.28);color:#4ade80;}
+.badge.wip{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.28);color:#fbbf24;}
+.badge.planned{background:rgba(148,163,184,.06);border:1px solid rgba(148,163,184,.18);color:#64748b;}
+.featured-card{padding:26px 24px;border-radius:18px;background:rgba(10,18,35,.88);border:1.5px solid rgba(147,197,253,.28);box-shadow:0 0 28px rgba(147,197,253,.1);margin-bottom:20px;}
+.featured-card .card-icon{width:50px;height:50px;font-size:22px;border-radius:14px;}
+.featured-card h3{font-size:20px;margin-bottom:10px;}
+.featured-card p{font-size:14px;}
+.featured-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:start;}
+@media(max-width:680px){.featured-grid{grid-template-columns:1fr;}}
+.featured-detail{background:rgba(15,23,42,.6);border:1px solid rgba(147,197,253,.14);border-radius:13px;padding:20px;}
+.featured-detail h4{font-size:14px;color:#93c5fd;margin-bottom:12px;}
+.featured-detail p{font-size:13px;color:#64748b;line-height:1.7;margin-bottom:9px;}
+.featured-detail strong{color:#94a3b8;}
+.back-link{display:inline-flex;align-items:center;gap:8px;margin-top:60px;padding:10px 20px;background:rgba(147,197,253,.07);border:1px solid rgba(147,197,253,.28);color:#bfdbfe;text-decoration:none;border-radius:11px;font-size:14px;letter-spacing:1px;transition:.2s;}
+.back-link:hover{background:rgba(147,197,253,.15);box-shadow:0 0 14px rgba(147,197,253,.22);}
+@media(max-width:768px){.page-header{padding:88px 18px 36px;}.page-header h1{font-size:28px;}.container{padding:0 14px 80px;}.nav{padding:11px 18px;}}
+</style>
+</head>
+<body>
+<div class="stars" id="starsEl"></div>
+<nav class="nav">
+  <div class="nav-brand">雙月 ✦</div>
+  <a href="index.html" class="nav-back">← 回主頁</a>
+</nav>
+<div class="page-header">
+  <h1>星辰魔法作品集</h1>
+  <p>Stellar Portfolio · 雙月的研究、程式、創作與修煉紀錄</p>
+</div>
+<div class="container">
+
+  <div class="section-title">新創研究（Startup Research）</div>
+  <div class="featured-card">
+    <div class="featured-grid">
+      <div>
+        <div class="card-icon">🧠</div>
+        <span class="badge active">進行中</span>
+        <h3>MindTrace</h3>
+        <p>以 AI 為核心的心理健康行為改變新創計畫。透過 Digital Phenotyping（數位表徵型）被動收集手機行為資料，在模型偵測到高風險狀態時，啟動 Just-in-time Intervention，在最需要的時刻給予支持。</p>
+        <div class="card-tags" style="margin-top:8px;">
+          <span class="card-tag">Digital Phenotyping</span>
+          <span class="card-tag">JITI</span>
+          <span class="card-tag">心理健康</span>
+          <span class="card-tag">AI</span>
+          <span class="card-tag">NCKU 創新圓夢計畫</span>
+        </div>
+      </div>
+      <div class="featured-detail">
+        <h4>✦ 核心設計</h4>
+        <p><strong>核心問題：</strong>智慧型手機的被動行為指標能否有效預測大學生的心理健康狀態變化？</p>
+        <p><strong>技術架構：</strong>被動感測 → 個人基準線建立 → 狀態偏差偵測 → 個人化介入觸發</p>
+        <p><strong>目前進度：</strong>申請 NCKU 2026 成大創新圓夢計畫（General Category）</p>
+        <p><strong>指導理念：</strong>心理健康不應只在「已經生病」後才被看見——讓科技成為更早的守護者。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">心理學研究（Psychology Research）</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">📊</div><span class="badge wip">進行中</span>
+      <h3>情緒分析 Mini Research</h3>
+      <p>使用心理統計與量表資料，探索大學生情緒模式（效價 × 激活度）。</p>
+      <div class="card-tags"><span class="card-tag">SPSS</span><span class="card-tag">Python</span><span class="card-tag">t-test</span><span class="card-tag">相關分析</span></div>
+      <div class="card-detail"><p><strong>內容：</strong>兩維情緒模型、群體差異比較、資料視覺化</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📱</div><span class="badge wip">進行中</span>
+      <h3>IG 社會比較 × 心理狀態</h3>
+      <p>被動 / 主動 Instagram 使用如何影響自尊與焦慮？</p>
+      <div class="card-tags"><span class="card-tag">社會比較理論</span><span class="card-tag">FOMO</span><span class="card-tag">量表統計</span></div>
+      <div class="card-detail"><p><strong>框架：</strong>社會比較理論、自我差異理論</p><p>被動使用（瀏覽）vs. 主動使用（發文）對心理健康的不同影響路徑。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎓</div><span class="badge active">修習中</span>
+      <h3>神經科學 &amp; 感知覺 Feynman 筆記</h3>
+      <p>用費曼學習法重新整理 Ch.2 神經科學、Ch.3 視覺、Ch.5 物體感知、Ch.6 視覺注意力。</p>
+      <div class="card-tags"><span class="card-tag">神經科學</span><span class="card-tag">感知覺</span><span class="card-tag">Feynman 法</span><span class="card-tag">雙語筆記</span></div>
+      <div class="card-detail"><p><strong>核心概念：</strong>動作電位、突觸傳遞、感受野、格式塔、視覺注意力</p><p>每個概念都用「教給完全不懂的人」的白話語言重新解釋，並加上生活例子。</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">程式作品（JavaScript / Python）</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">✦</div><span class="badge active">已完成</span>
+      <h3>個人魔法網站</h3>
+      <p>星塵粒子背景、魔法陣動畫、技能樹互動、部落格後台系統。</p>
+      <div class="card-tags"><span class="card-tag">JavaScript</span><span class="card-tag">Canvas API</span><span class="card-tag">CSS Animation</span><span class="card-tag">localStorage</span></div>
+      <div class="card-detail"><p><strong>特點：</strong>動態魔法陣 + 符文動畫 + 密碼保護後台 + 文章搜尋篩選</p><p>qian0307.github.io/my-magic-website/</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-icon">📈</div><span class="badge active">已完成</span>
+      <h3>Python 數據視覺化</h3>
+      <p>全球暖化 × 登革熱資料圖像化，探索氣候變遷與疾病傳播的相關性。</p>
+      <div class="card-tags"><span class="card-tag">Python</span><span class="card-tag">matplotlib</span><span class="card-tag">pandas</span><span class="card-tag">資料科學</span></div>
+      <div class="card-detail"><p><strong>內容：</strong>熱點分析、趨勢線預測、時間序列視覺化</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎮</div><span class="badge wip">開發中</span>
+      <h3>Roblox 教育遊戲</h3>
+      <p>以 Lua 撰寫的 Roblox 遊戲，教小學生英語單字與數字，以及 FPS 跑酷遊戲。</p>
+      <div class="card-tags"><span class="card-tag">Lua</span><span class="card-tag">Roblox Studio</span><span class="card-tag">遊戲設計</span><span class="card-tag">教育科技</span></div>
+      <div class="card-detail"><p><strong>作品一：</strong>英語教學關卡，學生在遊戲中學習問候語與數字</p><p><strong>作品二：</strong>100 關 FPS 跑酷遊戲，含數字射擊解謎機制</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">自動化魔導書（Automation）</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">📓</div><span class="badge active">使用中</span>
+      <h3>Notion 自動日誌系統</h3>
+      <p>自動產生每天的學習紀錄、任務追蹤與週報，個人魔法 OS 的核心。</p>
+      <div class="card-tags"><span class="card-tag">Notion API</span><span class="card-tag">Python</span><span class="card-tag">自動化</span></div>
+      <div class="card-detail"><p><strong>功能：</strong>自動分類、每日重複任務生成、進度追蹤儀表板</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🕸️</div><span class="badge active">使用中</span>
+      <h3>n8n Workflow 整合</h3>
+      <p>爬蟲 → 整理 → 自動上傳 Notion，跨平台資料自動化流程。</p>
+      <div class="card-tags"><span class="card-tag">n8n</span><span class="card-tag">Webhook</span><span class="card-tag">HTTP Request</span><span class="card-tag">多平台整合</span></div>
+      <div class="card-detail"><p><strong>用途：</strong>多平台資料整合、定時任務觸發、自動通知系統</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🃏</div><span class="badge wip">建構中</span>
+      <h3>TOEIC 10,000 詞 Anki 詞庫</h3>
+      <p>用 Anki SM-2 演算法建立的英語詞彙庫，目標 10,000 詞，配合例句與音頻。</p>
+      <div class="card-tags"><span class="card-tag">Anki</span><span class="card-tag">間隔重複</span><span class="card-tag">TOEIC</span><span class="card-tag">語言學習</span></div>
+      <div class="card-detail"><p><strong>設計原則：</strong>最小信息原則、例句優先、音頻強化</p><p>目前約 3,000 張，持續建構中。</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">資安 × CTF（Cybersecurity）</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">💉</div><span class="badge wip">學習中</span>
+      <h3>SQL Injection Writeup</h3>
+      <p>UNION、登入繞過、資料外洩完整流程實作記錄。</p>
+      <div class="card-tags"><span class="card-tag">BurpSuite</span><span class="card-tag">SQLite3</span><span class="card-tag">Web Security</span></div>
+      <div class="card-detail"><p><strong>技術：</strong>欄位爆破、資料型態偵測、UNION-based injection</p><p>學會用攻擊視角看系統設計，理解 Web 攻防的底層邏輯。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔥</div><span class="badge wip">學習中</span>
+      <h3>XSS Payload 研究</h3>
+      <p>反射型、DOM-based、Stored XSS 實作與防禦分析。</p>
+      <div class="card-tags"><span class="card-tag">XSS</span><span class="card-tag">JavaScript</span><span class="card-tag">DOM 操作</span></div>
+      <div class="card-detail"><p><strong>技術：</strong>payload craft、事件注入、cookie 竊取模擬</p><p>了解瀏覽器安全機制與 CSP（Content Security Policy）的作用。</p></div>
+    </div>
+  </div>
+
+  <div class="section-title">世界觀 &amp; 視覺創作（Worldbuilding）</div>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🌙</div><span class="badge active">持續建構</span>
+      <h3>雙月魔法使世界觀</h3>
+      <p>藍 × 紫 雙色月曜風格的奇幻世界觀：角色設計、星紋系統、魔法技能樹，以及「星辰術士」的角色定位。</p>
+      <div class="card-tags"><span class="card-tag">Worldbuilding</span><span class="card-tag">奇幻設計</span><span class="card-tag">角色系統</span><span class="card-tag">符文美學</span></div>
+      <div class="card-detail"><p><strong>風格：</strong>深海藍 × 星際紫，融合北歐符文與東方美學</p><p><strong>系統：</strong>魔法技能樹（心理學 × 技術 × 知識）、屬性軌道圖、情緒卡片</p><p><strong>目標：</strong>形成完整宇宙，讓所有作品、角色、故事系統化。</p></div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧩</div><span class="badge active">已完成</span>
+      <h3>智力型自我評估互動工具</h3>
+      <p>以繁體中文撰寫的薩丕爾性格測驗，獨立 HTML 互動專案，即時計分與結果呈現。</p>
+      <div class="card-tags"><span class="card-tag">HTML</span><span class="card-tag">JavaScript</span><span class="card-tag">互動設計</span><span class="card-tag">繁體中文</span></div>
+      <div class="card-detail"><p><strong>設計重點：</strong>題目設計反映心理學測驗的效度概念，單頁式互動介面。</p></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;">
+    <a href="index.html" class="back-link">← 回到主頁</a>
+  </div>
+</div>
+
+<script>
+const sc=document.getElementById("starsEl");
+for(let i=0;i<130;i++){
+  const s=document.createElement("div");s.className="star";
+  s.style.left=Math.random()*100+"%";s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*3+"s";
+  const sz=(Math.random()*2+1)+"px";s.style.width=s.style.height=sz;
+  sc.appendChild(s);
+}
+document.querySelectorAll(".card:not(.featured-card)").forEach(card=>{
+  card.addEventListener("click",()=>{
+    const was=card.classList.contains("open");
+    document.querySelectorAll(".card.open").forEach(c=>c.classList.remove("open"));
+    if(!was)card.classList.add("open");
+  });
+});
+</script>
+</body>
+</html>
