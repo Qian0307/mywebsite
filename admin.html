@@ -484,18 +484,54 @@ function parseBody(raw){
       .replace(/`(.+?)`/g,'<code>$1</code>')
       .replace(/\[\[(.+?)\]\]/g,'<span style="display:inline-block;padding:1px 7px;background:rgba(147,197,253,.1);border:1px solid rgba(147,197,253,.25);border-radius:5px;color:#93c5fd;font-size:13.5px;">$1</span>');
   }
-  const lines=raw.split("\n");const out=[];let inUl=false;
-  for(let i=0;i<lines.length;i++){
-    const line=lines[i];const trim=line.trim();
-    if(trim===""){if(inUl){out.push("</ul>");inUl=false;}continue;}
-    if(line.startsWith("### ")){if(inUl){out.push("</ul>");inUl=false;}out.push(`<h3>${inlineFmt(line.slice(4))}</h3>`);}
-    else if(line.startsWith("## ")){if(inUl){out.push("</ul>");inUl=false;}out.push(`<h2>${inlineFmt(line.slice(3))}</h2>`);}
-    else if(line.startsWith("# ")){if(inUl){out.push("</ul>");inUl=false;}out.push(`<h2>${inlineFmt(line.slice(2))}</h2>`);}
-    else if(line.startsWith("> ")){if(inUl){out.push("</ul>");inUl=false;}out.push(`<blockquote>${inlineFmt(line.slice(2))}</blockquote>`);}
-    else if(line.match(/^[-*•]\s/)){if(!inUl){out.push("<ul>");inUl=true;}out.push(`<li>${inlineFmt(line.replace(/^[-*•]\s/,""))}</li>`);}
-    else{if(inUl){out.push("</ul>");inUl=false;}out.push(`<p>${inlineFmt(line)}</p>`);}
+  const lines=raw.split("\n");
+  const out=[];
+  let inUl=false;
+  let tableBuf=[];
+
+  function flushUl(){if(inUl){out.push("</ul>");inUl=false;}}
+  function flushTable(){
+    if(!tableBuf.length)return;
+    const rows=tableBuf.filter((_,i)=>i!==1);
+    out.push('<div style="overflow-x:auto;margin:14px 0;"><table style="width:100%;border-collapse:collapse;font-size:13.5px;">');
+    rows.forEach((row,ri)=>{
+      const cells=row.split("|").map(c=>c.trim()).filter((_,ci,a)=>ci>0&&ci<a.length-1);
+      const tag=ri===0?"th":"td";
+      const style=ri===0
+        ?'style="background:rgba(147,197,253,.1);color:#bfdbfe;padding:8px 12px;text-align:left;border:1px solid rgba(147,197,253,.15);"'
+        :'style="padding:7px 12px;border:1px solid rgba(255,255,255,.06);color:#64748b;"';
+      out.push(`<tr>${cells.map(c=>`<${tag} ${style}>${inlineFmt(c)}</${tag}>`).join("")}</tr>`);
+    });
+    out.push("</table></div>");
+    tableBuf=[];
   }
-  if(inUl)out.push("</ul>");return out.join("");
+
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i];
+    const trim=line.trim();
+
+    if(trim.startsWith("|")&&trim.endsWith("|")){
+      flushUl();tableBuf.push(trim);continue;
+    }
+    if(tableBuf.length)flushTable();
+
+    if(/^(-{3,}|\*{3,}|_{3,})$/.test(trim)){
+      flushUl();
+      out.push('<hr style="border:none;border-top:1px solid rgba(147,197,253,.18);margin:20px 0;">');
+      continue;
+    }
+
+    if(trim===""){flushUl();continue;}
+
+    if(line.startsWith("### ")){flushUl();out.push(`<h3>${inlineFmt(line.slice(4))}</h3>`);}
+    else if(line.startsWith("## ")){flushUl();out.push(`<h2>${inlineFmt(line.slice(3))}</h2>`);}
+    else if(line.startsWith("# ")){flushUl();out.push(`<h2>${inlineFmt(line.slice(2))}</h2>`);}
+    else if(line.startsWith("> ")){flushUl();out.push(`<blockquote>${inlineFmt(line.slice(2))}</blockquote>`);}
+    else if(line.match(/^[-*•]\s/)){if(!inUl){out.push("<ul>");inUl=true;}out.push(`<li>${inlineFmt(line.replace(/^[-*•]\s/,""))}</li>`);}
+    else{flushUl();out.push(`<p>${inlineFmt(line)}</p>`);}
+  }
+  flushUl();flushTable();
+  return out.join("");
 }
 
 /* ── Preview ── */
